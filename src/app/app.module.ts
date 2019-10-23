@@ -16,6 +16,7 @@ import { validationMessages } from './modules/validation/model/validation-messag
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ErrorHandlingInterceptor } from '../utils/class/error-handling-interceptor';
+import { NavigationModule } from './modules/navigation/navigation.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,7 +30,8 @@ import { ErrorHandlingInterceptor } from '../utils/class/error-handling-intercep
     MatButtonModule,
     ReactiveFormsModule,
     MatInputModule,
-    ValidationModule
+    ValidationModule,
+    NavigationModule
   ],
   providers: [
     HttpClient,
