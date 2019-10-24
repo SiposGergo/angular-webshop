@@ -9,9 +9,23 @@
   >
     <mat-toolbar>Menü</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item *ngIf="!loggedInUser" routerLink="login">Bejelentkezés</a>
-      <a mat-list-item *ngIf="loggedInUser" routerLink="">Kezdőlap</a>
-      <a mat-list-item *ngIf="loggedInUser" routerLink="logout">Kijelentkezés</a>
+      <a mat-list-item *ngIf="!loggedInUser" routerLink="login"
+        ><span><i class="fa fa-sign-in-alt mr-1"></i>Bejelentkezés</span></a
+      >
+      <a mat-list-item *ngIf="loggedInUser" routerLink=""
+        ><span><i class="fa fa-home mr-1"></i>Kezdőlap</span></a
+      >
+      <a mat-list-item *ngIf="loggedInUser" routerLink="logout"
+        ><span><i class="fa fa-sign-out-alt mr-1"></i>Kijelentkezés</span></a
+      >
+      <div appSubMenu>
+        <a mat-list-item #subMenuParent>
+          <span><i class="fa fa-balance-scale mr-1"></i>Áfa kategóriák</span>
+          <i #submenuIcon></i
+        ></a>
+        <a mat-list-item appSubMenuChild routerLink="tax" class="submenu">Lista</a>
+        <a mat-list-item appSubMenuChild routerLink="tax/new" class="submenu">Új kategória</a>
+      </div>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

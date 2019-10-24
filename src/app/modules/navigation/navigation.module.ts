@@ -7,9 +7,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
+import { SubMenuDirective } from './directive/sub-menu.directive';
+import { SubMenuChildDirective } from './directive/sub-menu-child.directive';
 
 @NgModule({
-  declarations: [NavigationComponent],
+  declarations: [NavigationComponent, SubMenuDirective, SubMenuChildDirective],
   exports: [NavigationComponent],
   imports: [
     CommonModule,

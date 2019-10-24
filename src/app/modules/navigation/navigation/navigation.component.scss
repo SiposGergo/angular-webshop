@@ -16,3 +16,11 @@
   top: 0;
   z-index: 1;
 }
+
+::ng-deep .mat-list-item-content {
+  justify-content: space-between;
+}
+
+.submenu {
+  padding-left: 20px !important;
+}
