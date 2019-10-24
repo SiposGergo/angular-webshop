@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ValidationModule } from '../validation/validation.module';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -18,7 +19,8 @@ import { ValidationModule } from '../validation/validation.module';
     MatButtonModule,
     MatInputModule,
     ReactiveFormsModule,
-    ValidationModule
+    ValidationModule,
+    MatProgressBarModule
   ]
 })
 export class LoginModule {}

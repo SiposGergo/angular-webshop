@@ -17,6 +17,11 @@ import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ErrorHandlingInterceptor } from '../utils/class/error-handling-interceptor';
 import { NavigationModule } from './modules/navigation/navigation.module';
+import { AuthService } from './modules/auth/auth.service';
+import { NgxsModule } from '@ngxs/store';
+import { AuthModule } from './modules/auth/auth.module';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,10 +36,15 @@ import { NavigationModule } from './modules/navigation/navigation.module';
     ReactiveFormsModule,
     MatInputModule,
     ValidationModule,
-    NavigationModule
+    NavigationModule,
+    AuthModule,
+    NgxsModule.forRoot(),
+    NgxsStoragePluginModule.forRoot({ key: ['auth'] }),
+    NgxsReduxDevtoolsPluginModule.forRoot()
   ],
   providers: [
     HttpClient,
+    AuthService,
     { provide: BASE_URL_TOKEN, useValue: environment.apiUrl },
     {
       provide: VALIDATION_MESSAGES,
