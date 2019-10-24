@@ -15,10 +15,7 @@
       <a mat-list-item *ngIf="loggedInUser" routerLink=""
         ><span><i class="fa fa-home mr-1"></i>Kezdőlap</span></a
       >
-      <a mat-list-item *ngIf="loggedInUser" routerLink="logout"
-        ><span><i class="fa fa-sign-out-alt mr-1"></i>Kijelentkezés</span></a
-      >
-      <div appSubMenu>
+      <div appSubMenu *ngIf="loggedInUser && loggedInUser.role === 0">
         <a mat-list-item #subMenuParent>
           <span><i class="fa fa-balance-scale mr-1"></i>Áfa kategóriák</span>
           <i #submenuIcon></i
@@ -26,6 +23,9 @@
         <a mat-list-item appSubMenuChild routerLink="tax" class="submenu">Lista</a>
         <a mat-list-item appSubMenuChild routerLink="tax/new" class="submenu">Új kategória</a>
       </div>
+      <a mat-list-item *ngIf="loggedInUser" routerLink="logout"
+        ><span><i class="fa fa-sign-out-alt mr-1"></i>Kijelentkezés</span></a
+      >
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -40,7 +40,12 @@
         <mat-icon aria-label="Side nav toggle icon">menü</mat-icon>
       </button>
       <span>Webshop</span>
-      <ng-container *ngIf="loggedInUser">{{ loggedInUser.userName }}</ng-container>
+      <div *ngIf="loggedInUser">
+        {{ loggedInUser.userName }}
+        <a matTooltip="Kilépés" class="logout-button" matListIcon routerLink="logout"
+          ><i class="fa fa-sign-out-alt"></i
+        ></a>
+      </div>
     </mat-toolbar>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
