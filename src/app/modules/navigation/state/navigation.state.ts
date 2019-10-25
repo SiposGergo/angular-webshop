@@ -1,6 +1,6 @@
 import { Action, Selector, State } from '@ngxs/store';
 import { NavigationStateInterface } from './navigation-state.interface';
-import { SetOpenedSubmenuAction } from './action/set-opened-submenu.action';
+import { SubmenuClickedAction } from './action/submenu-clicked.action';
 
 @State<NavigationStateInterface>({
   name: 'navigation',
@@ -13,8 +13,12 @@ export class NavigationState {
     return state.openedSubMenu;
   }
 
-  @Action(SetOpenedSubmenuAction)
-  setOpenedSubmenu({ setState }, { openedSubMenu }) {
-    setState({ openedSubMenu });
+  @Action(SubmenuClickedAction)
+  setOpenedSubmenu({ setState, getState }, { openedSubMenu }) {
+    if (getState().openedSubMenu === openedSubMenu) {
+      setState({ openedSubMenu: undefined });
+    } else {
+      setState({ openedSubMenu });
+    }
   }
 }

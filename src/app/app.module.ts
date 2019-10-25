@@ -39,7 +39,7 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
     NavigationModule,
     AuthModule,
     NgxsModule.forRoot(),
-    NgxsStoragePluginModule.forRoot({ key: ['auth'] }),
+    NgxsStoragePluginModule.forRoot({ key: ['auth', 'navigation'] }),
     NgxsReduxDevtoolsPluginModule.forRoot()
   ],
   providers: [
