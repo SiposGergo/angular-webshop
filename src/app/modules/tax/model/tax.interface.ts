@@ -1,5 +1,5 @@
 export class TaxInterface {
-  id: number;
+  id?: number;
   name: string;
   percent: number;
   description: string;

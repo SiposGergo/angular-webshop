@@ -1,0 +1,57 @@
+<form [formGroup]="productCategoryForm">
+  <ng-container *ngIf="taxCategories$ | async as taxCategories">
+    <mat-card *ngIf="idParam$ | async as idParam">
+      <mat-card-title>{{ idParam === 'new' ? 'Új termék kategória' : 'Termék kategória szerkesztése' }}</mat-card-title>
+      <mat-card-content class="d-flex flex-column">
+        <mat-form-field>
+          <input matInput type="text" placeholder="Név" required [formControl]="nameControl" />
+          <mat-error>
+            <app-validation [control]="nameControl"></app-validation>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select [formControl]="taxCategoryIdControl" placeholder="Áfa kategória" required>
+            <mat-option *ngFor="let tax of taxCategories" [value]="tax.id">{{ tax | formatTax }}</mat-option>
+          </mat-select>
+          <mat-error>
+            <app-validation [control]="taxCategoryIdControl"></app-validation>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <textarea matInput placeholder="Leírás" required [formControl]="descriptionControl"></textarea>
+          <mat-error>
+            <app-validation [control]="descriptionControl"></app-validation>
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions class="d-flex justify-content-end">
+        <button
+          (click)="submitForm(false)"
+          class="mr-2"
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="
+            (productCategoryForm.submitted && productCategoryForm.invalid) || productCategoryForm.isSubmitting
+          "
+        >
+          Mentés
+        </button>
+        <button
+          (click)="submitForm(true)"
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="
+            (productCategoryForm.submitted && productCategoryForm.invalid) || productCategoryForm.isSubmitting
+          "
+        >
+          Mentés és új
+        </button>
+      </mat-card-actions>
+      <mat-card-footer>
+        <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+      </mat-card-footer>
+    </mat-card>
+  </ng-container>
+</form>

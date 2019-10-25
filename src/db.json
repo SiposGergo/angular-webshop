@@ -1,0 +1,36 @@
+{
+  "product-category": [
+    {
+      "name": "asdsdfdsfsdffbhf",
+      "taxCategoryId": 4,
+      "description": "asd",
+      "id": 1
+    }
+  ],
+  "tax": [
+    {
+      "name": "Étterem",
+      "percent": 18,
+      "description": "Étteremben helyben fogyasztás esetén. ha rendeled akkor nem.",
+      "id": 3
+    },
+    {
+      "name": "Maxmax",
+      "percent": 100,
+      "description": "Orbán álma",
+      "id": 4
+    },
+    {
+      "name": "Áfacsalás",
+      "percent": 0,
+      "description": "Like it",
+      "id": 5
+    },
+    {
+      "name": "TEszt",
+      "percent": 4,
+      "description": "sdf",
+      "id": 6
+    }
+  ]
+}

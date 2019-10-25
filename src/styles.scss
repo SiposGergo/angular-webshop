@@ -10,9 +10,14 @@
 @import '~bootstrap/scss/utilities/display';
 @import '~bootstrap/scss/utilities/flex';
 @import '~bootstrap/scss/utilities/spacing';
+@import '~bootstrap/scss/utilities/sizing';
 
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
+
+.primary {
+  color: #673ab7;
+}
 
 html,
 body {

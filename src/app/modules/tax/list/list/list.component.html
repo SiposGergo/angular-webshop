@@ -1,0 +1,35 @@
+<div matSort>
+  <mat-progress-bar color="secondary" *ngIf="this.isLoading" mode="indeterminate"></mat-progress-bar>
+  <table
+    *ngIf="dataSource$ | async as dataSource"
+    mat-table
+    [dataSource]="dataSource"
+    class="w-100 mat-elevation-z8"
+  >
+    <ng-container matColumnDef="name">
+      <th mat-sort-header mat-header-cell *matHeaderCellDef>Név</th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="percent">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>Százalék</th>
+      <td mat-cell *matCellDef="let element">{{ element.percent }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Leírás</th>
+      <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Műveletek</th>
+      <td mat-cell *matCellDef="let element">
+        <i (click)="deleteTax(element.id)" matTooltip="Törlés" class="mr-2 primary fa fa-trash-alt"></i
+        ><i (click)="editTax(element.id)" matTooltip="Szerkesztés" class="primary fa fa-edit"></i>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

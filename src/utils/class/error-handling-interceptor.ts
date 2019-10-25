@@ -11,9 +11,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError(error => {
-        if (error.status === 0 || error.status === 500) {
-          this.matSnackbar.open('Hiba történt a művelet során!', 'Bezárás', { duration: 5000 });
-        }
+        this.matSnackbar.open('Hiba történt a művelet során!', 'Bezárás', { duration: 5000 });
         return throwError(error);
       })
     );

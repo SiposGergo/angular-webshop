@@ -44,8 +44,8 @@ export class ValidationComponent implements OnChanges, OnInit {
     }
     this.control.statusChanges
       .pipe(
-        debounceTime(200),
-        distinctUntilChanged()
+        distinctUntilChanged(),
+        debounceTime(200)
       )
       .subscribe(() => this.cdr.markForCheck());
   }

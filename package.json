@@ -25,6 +25,7 @@
     "@ngxs/store": "^3.5.1",
     "bootstrap": "^4.3.1",
     "core-js": "^2.5.4",
+    "json-server": "^0.15.1",
     "material": "^0.4.1",
     "ngx-take-until-destroy": "^5.4.0",
     "rxjs": "~6.5.3",
