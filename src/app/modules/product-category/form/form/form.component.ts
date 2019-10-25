@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { FormGroup } from '../../../../../utils/class/form-group';
 import { Observable, throwError } from 'rxjs';
@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 import { isPresent } from '../../../../../utils/type-guard/is-present';
 import { isNumeric } from '../../../../../utils/type-guard/is-numeric';
 import { ProductCategoryInterface } from '../../model/product-category.interface';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-form',
@@ -33,15 +34,32 @@ export class FormComponent implements OnInit, OnDestroy {
   idParam$: Observable<string | null>;
   idParam: string | null;
   isLoading = false;
-
   taxCategories$: Observable<TaxInterface[]>;
+
+  // tslint:disable-next-line:variable-name
+  private _isHandset = false;
+
+  @HostBinding('class.isHandset')
+  get isHandset() {
+    return this._isHandset;
+  }
+
   constructor(
     private productCategoryService: ProductCategoryService,
     private taxService: TaxService,
     private route: ActivatedRoute,
     private router: Router,
-    private matSnackBar: MatSnackBar
+    private matSnackBar: MatSnackBar,
+    private breakpointObserver: BreakpointObserver
   ) {
+    this.breakpointObserver
+      .observe(Breakpoints.Handset)
+      .pipe(
+        untilDestroyed(this),
+        map(result => result.matches)
+      )
+      .subscribe(isHandSet => (this._isHandset = isHandSet));
+
     this.taxCategories$ = this.taxService.getTaxes();
     this.idParam$ = this.route.paramMap.pipe(
       untilDestroyed(this),

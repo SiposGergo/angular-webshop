@@ -13,9 +13,10 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
   styleUrls: ['./navigation.component.scss']
 })
 export class NavigationComponent implements OnDestroy {
-  isHandset$: Observable<boolean> = this.breakpointObserver
-    .observe(Breakpoints.Handset)
-    .pipe(map(result => result.matches));
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+    untilDestroyed(this),
+    map(result => result.matches)
+  );
 
   loggedInUser: UserInterface | undefined;
 

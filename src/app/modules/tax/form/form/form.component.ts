@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { FormGroup } from '../../../../../utils/class/form-group';
 import { TaxService } from '../../tax.service';
@@ -11,6 +11,7 @@ import { isNumeric } from '../../../../../utils/type-guard/is-numeric';
 import { isIntegerValidator } from '../../../validation/custom-validator/integer.validator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TaxInterface } from '../../model/tax.interface';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-form',
@@ -34,6 +35,14 @@ export class FormComponent implements OnDestroy {
     description: this.descriptionControl
   });
 
+  // tslint:disable-next-line:variable-name
+  private _isHandset = false;
+
+  @HostBinding('class.isHandset')
+  get isHandset() {
+    return this._isHandset;
+  }
+
   idParam$: Observable<string | null>;
   idParam: string | null;
   isLoading = false;
@@ -42,8 +51,17 @@ export class FormComponent implements OnDestroy {
     private taxService: TaxService,
     private route: ActivatedRoute,
     private router: Router,
-    private matSnackBar: MatSnackBar
+    private matSnackBar: MatSnackBar,
+    private breakpointObserver: BreakpointObserver
   ) {
+    this.breakpointObserver
+      .observe(Breakpoints.Handset)
+      .pipe(
+        untilDestroyed(this),
+        map(result => result.matches)
+      )
+      .subscribe(isHandSet => (this._isHandset = isHandSet));
+
     this.idParam$ = this.route.paramMap.pipe(
       untilDestroyed(this),
       map(x => x.get('id'))

@@ -16,7 +16,7 @@
         ><span><i class="fa fa-home mr-1"></i>Kezdőlap</span></a
       >
 
-      <div appSubMenu *ngIf="loggedInUser && loggedInUser.role === 0">
+      <div appSubMenu="tax" *ngIf="loggedInUser && loggedInUser.role === 0">
         <a mat-list-item #subMenuParent>
           <span><i class="fa fa-balance-scale mr-1"></i>Áfa kategóriák</span>
           <i #submenuIcon></i
@@ -25,7 +25,7 @@
         <a mat-list-item appSubMenuChild routerLink="/tax/new" class="submenu">Új kategória</a>
       </div>
 
-      <div appSubMenu *ngIf="loggedInUser && loggedInUser.role === 0">
+      <div appSubMenu="product-category" *ngIf="loggedInUser && loggedInUser.role === 0">
         <a mat-list-item #subMenuParent>
           <span><i class="fa fa-stream mr-1"></i>Termék kategóriák</span>
           <i #submenuIcon></i

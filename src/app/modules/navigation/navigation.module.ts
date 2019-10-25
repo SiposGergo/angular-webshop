@@ -10,6 +10,8 @@ import { RouterModule } from '@angular/router';
 import { SubMenuDirective } from './directive/sub-menu.directive';
 import { SubMenuChildDirective } from './directive/sub-menu-child.directive';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxsModule } from '@ngxs/store';
+import { NavigationState } from './state/navigation.state';
 
 @NgModule({
   declarations: [NavigationComponent, SubMenuDirective, SubMenuChildDirective],
@@ -22,7 +24,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatIconModule,
     MatButtonModule,
     RouterModule,
-    MatTooltipModule
+    MatTooltipModule,
+    NgxsModule.forFeature([NavigationState])
   ]
 })
 export class NavigationModule {}
