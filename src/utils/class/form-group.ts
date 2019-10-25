@@ -1,9 +1,12 @@
 import { FormGroup as AngularFormGroup } from '@angular/forms';
 import { isPresent } from '../type-guard/is-present';
+import { Observable } from 'rxjs';
 
 export class FormGroup extends AngularFormGroup {
   submitted: boolean;
   isSubmitting: boolean;
+
+  statusChanges: Observable<any>;
 
   constructor(props) {
     super(props);

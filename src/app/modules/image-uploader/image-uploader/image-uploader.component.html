@@ -1,0 +1,9 @@
+<input #fileInput accept=".jpg,.png" type="file" placeholder="Kép" id="file" required />
+<label for="file" [ngClass]="{ required: imageControl.touched && this.imageControl.getError('required') }"
+  ><i *ngIf="imageControl.value" (click)="removeLoadedImage($event)" class="fa fa-times-circle"></i>
+  <span *ngIf="!this.imageControl.value; else imagePreview">
+    {{
+      imageControl.touched && this.imageControl.getError('required') ? 'Kép feltöltése kötelező' : 'Kép feltöltése'
+    }}</span
+  ><ng-template #imagePreview><img [src]="imageControl.value" alt="kép előnézet"/></ng-template
+></label>

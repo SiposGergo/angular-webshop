@@ -76,6 +76,31 @@
         >
       </div>
 
+      <div appSubMenu="product" *ngIf="loggedInUser && loggedInUser.role === 0">
+        <a mat-list-item #subMenuParent>
+          <span><i class="fa fa-store mr-1"></i>Termékek</span>
+          <i #submenuIcon></i
+          ></a>
+        <a
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active-list-item"
+          mat-list-item
+          appSubMenuChild
+          routerLink="/product"
+          class="submenu"
+        >Termék lista</a
+        >
+        <a
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active-list-item"
+          mat-list-item
+          appSubMenuChild
+          routerLink="/product/new"
+          class="submenu"
+        >Új termék</a
+        >
+      </div>
+
       <a
         [routerLinkActiveOptions]="{ exact: true }"
         routerLinkActive="active-list-item"

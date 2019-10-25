@@ -1,11 +1,14 @@
+import { ProductCategoryInterface } from '../../product-category/model/product-category.interface';
+import { ProductTypeEnum } from './product-type.enum';
+
 export interface ProductInterface {
-  id: number;
+  id?: number;
   name: string;
-  autoPriceCalculation: boolean;
   image: string;
-  taxId: number;
+  productCategoryId: number;
+  productCategory?: ProductCategoryInterface;
   netPrice: number;
   description: string;
-  ingredients: number[];
-  // properties: ProductProperiesModel[];
+  labels: string[];
+  productType: ProductTypeEnum;
 }

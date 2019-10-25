@@ -6,7 +6,6 @@ import { isFunction } from '../../../utils/type-guard/is-function';
 })
 export class ShowErrorPipe implements PipeTransform {
   transform(value: string | ((object) => string), errors: object): string {
-    console.log('fut');
     if (isFunction(value)) {
       return value(errors);
     }

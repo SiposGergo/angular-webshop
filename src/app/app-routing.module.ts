@@ -17,6 +17,11 @@ const routes: Routes = [
     path: 'product-category',
     loadChildren: 'src/app/modules/product-category/product-category.module#ProductCategoryModule',
     canActivate: ['isUserAdmin']
+  },
+  {
+    path: 'product',
+    loadChildren: 'src/app/modules/product/product.module#ProductModule',
+    canActivate: ['isUserAdmin']
   }
 ];
 
