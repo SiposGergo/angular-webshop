@@ -9,10 +9,20 @@
   >
     <mat-toolbar>Menü</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item *ngIf="!loggedInUser" routerLink="/login"
+      <a
+        mat-list-item
+        *ngIf="!loggedInUser"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="active-list-item"
+        routerLink="/login"
         ><span><i class="fa fa-sign-in-alt mr-1"></i>Bejelentkezés</span></a
       >
-      <a mat-list-item *ngIf="loggedInUser" routerLink="/"
+      <a
+        mat-list-item
+        *ngIf="loggedInUser"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="active-list-item"
+        routerLink="/"
         ><span><i class="fa fa-home mr-1"></i>Kezdőlap</span></a
       >
 
@@ -21,8 +31,24 @@
           <span><i class="fa fa-balance-scale mr-1"></i>Áfa kategóriák</span>
           <i #submenuIcon></i
         ></a>
-        <a mat-list-item appSubMenuChild routerLink="/tax" class="submenu">Lista</a>
-        <a mat-list-item appSubMenuChild routerLink="/tax/new" class="submenu">Új kategória</a>
+        <a
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active-list-item"
+          mat-list-item
+          appSubMenuChild
+          routerLink="/tax"
+          class="submenu"
+          >Lista</a
+        >
+        <a
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active-list-item"
+          mat-list-item
+          appSubMenuChild
+          routerLink="/tax/new"
+          class="submenu"
+          >Új kategória</a
+        >
       </div>
 
       <div appSubMenu="product-category" *ngIf="loggedInUser && loggedInUser.role === 0">
@@ -30,11 +56,32 @@
           <span><i class="fa fa-stream mr-1"></i>Termék kategóriák</span>
           <i #submenuIcon></i
         ></a>
-        <a mat-list-item appSubMenuChild routerLink="/product-category" class="submenu">Lista</a>
-        <a mat-list-item appSubMenuChild routerLink="/product-category/new" class="submenu">Új kategória</a>
+        <a
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active-list-item"
+          mat-list-item
+          appSubMenuChild
+          routerLink="/product-category"
+          class="submenu"
+          >Lista</a
+        >
+        <a
+          [routerLinkActiveOptions]="{ exact: true }"
+          routerLinkActive="active-list-item"
+          mat-list-item
+          appSubMenuChild
+          routerLink="/product-category/new"
+          class="submenu"
+          >Új kategória</a
+        >
       </div>
 
-      <a mat-list-item *ngIf="loggedInUser" routerLink="/logout"
+      <a
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="active-list-item"
+        mat-list-item
+        *ngIf="loggedInUser"
+        routerLink="/logout"
         ><span><i class="fa fa-sign-out-alt mr-1"></i>Kijelentkezés</span></a
       >
     </mat-nav-list>

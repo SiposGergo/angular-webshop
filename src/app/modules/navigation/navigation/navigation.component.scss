@@ -28,3 +28,11 @@
 .logout-button {
   color: white;
 }
+
+.active-list-item,
+.active-list-item:active,
+.active-list-item:focus,
+.active-list-item:hover {
+  background: #673ab7;
+  color: white;
+}
