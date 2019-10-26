@@ -27,6 +27,9 @@ img {
   height: 100%;
   margin: 0 20px;
   position: relative;
+  &:hover {
+    opacity: 0.5;
+  }
 
   span {
     display: flex;

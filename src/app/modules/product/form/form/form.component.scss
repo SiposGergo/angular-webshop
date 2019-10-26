@@ -4,6 +4,12 @@
   margin: 15px auto;
 }
 
+.gross {
+  text-overflow: ellipsis;
+  max-width: 150px;
+  overflow: hidden;
+}
+
 .w-33 {
   width: 33.33%;
 }
@@ -11,4 +17,7 @@
 .image-div {
   height: 200px;
   width: 66.66%;
+  &-handset {
+    width: 100%;
+  }
 }

@@ -1,0 +1,41 @@
+<button
+  [ngClass]="{ 'w-33': !isHandset, 'w-100': isHandset }"
+  type="button"
+  color="primary"
+  mat-flat-button
+  (click)="onAddNewComponent()"
+>
+  <mat-icon>add</mat-icon> Termék felvétele
+</button>
+<mat-error *ngIf="productComponentsArray.touched && this.productComponentsArray.getError('required')"
+  >Minimum egy termék megadása kötelező összetett termék esetén</mat-error
+>
+<ng-container [formGroup]="productForm">
+  <ng-container formArrayName="components">
+    <ng-container *ngFor="let item of productComponentsArray.controls; let i = index" [formGroup]="item">
+      <div class="d-flex flex-row justify-content-between align-items-center flex-wrap">
+        <h3>{{ i + 1 }}. termék</h3>
+
+        <mat-form-field class="w-25">
+          <mat-select placeholder="Termék" required formControlName="productId">
+            <mat-option *ngFor="let simpleProduct of simpleProducts" [value]="simpleProduct.id">{{
+              simpleProduct.name
+            }}</mat-option>
+          </mat-select>
+          <mat-error>
+            <app-validation controlName="productId"></app-validation>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-25">
+          <input type="number" matInput required formControlName="quantity" placeholder="Mennyiség" />
+          <mat-error>
+            <app-validation controlName="quantity"></app-validation>
+          </mat-error>
+        </mat-form-field>
+        <button type="button" (click)="onRemoveComponent(i)" mat-icon-button color="primary">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-container>

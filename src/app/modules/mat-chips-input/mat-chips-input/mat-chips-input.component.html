@@ -1,0 +1,20 @@
+<mat-form-field class="w-100">
+  <mat-chip-list (focusin)="focusIn()" (focusout)="focusOut()" #chipList aria-label="Fruit selection">
+    <mat-chip *ngFor="let label of chipsControl.value; let i = index" (removed)="removeChip(i)" [selectable]="false">
+      {{ label }}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input
+      [placeholder]="this.chipsControl.value?.length > 0 ? 'Címkék' : 'Címke hozzáadása'"
+      [formControl]="textInputControl"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="false"
+      (matChipInputTokenEnd)="addLabel()"
+      matInput
+    />
+    <mat-error *ngIf="isFocusInChips">
+      <app-validation [control]="textInputControl"></app-validation>
+    </mat-error>
+  </mat-chip-list>
+</mat-form-field>

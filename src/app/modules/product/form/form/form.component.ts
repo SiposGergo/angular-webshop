@@ -1,21 +1,22 @@
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, throwError } from 'rxjs';
 import { TaxService } from '../../../tax/tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay, tap } from 'rxjs/operators';
 import { isPresent } from '../../../../../utils/type-guard/is-present';
 import { isNumeric } from '../../../../../utils/type-guard/is-numeric';
 import { ProductService } from '../../product.service';
 import { ProductCategoryInterface } from '../../../product-category/model/product-category.interface';
 import { ProductTypeEnum } from '../../model/product-type.enum';
-import { FormControl, Validators } from '@angular/forms';
+import { FormArray, FormControl, Validators } from '@angular/forms';
 import { FormGroup } from '../../../../../utils/class/form-group';
 import { ProductCategoryService } from '../../../product-category/product-category.service';
-import { MatChipInputEvent } from '@angular/material/chips';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { ProductInterface } from '../../model/product.interface';
+import { isIntegerValidator } from '../../../validation/custom-validator/integer.validator';
+import { ProductComponentInterface } from '../../model/product-component.interface';
 
 @Component({
   selector: 'app-form',
@@ -24,15 +25,17 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
   providers: [TaxService, ProductService, ProductCategoryService]
 })
 export class FormComponent implements OnInit, OnDestroy {
-  labelControl = new FormControl(undefined, [Validators.required, Validators.maxLength(20)]);
+  // a chips-hez
+  labelControl = new FormControl(undefined, [Validators.maxLength(20), Validators.required]);
 
   nameControl = new FormControl(undefined, [Validators.required]);
   imageControl = new FormControl(undefined, [Validators.required]);
   productCategoryIdControl = new FormControl(undefined, [Validators.required]);
   netPriceControl = new FormControl(undefined, [Validators.required]);
   descriptionControl = new FormControl(undefined, [Validators.required]);
-  labelsControl = new FormControl([], [Validators.required]);
+  labelsControl = new FormControl([]);
   productTypeControl = new FormControl(undefined, [Validators.required]);
+  productComponentsArray: FormArray = new FormArray([]);
 
   productForm = new FormGroup({
     name: this.nameControl,
@@ -41,7 +44,8 @@ export class FormComponent implements OnInit, OnDestroy {
     netPrice: this.netPriceControl,
     description: this.descriptionControl,
     labels: this.labelsControl,
-    productType: this.productTypeControl
+    productType: this.productTypeControl,
+    components: this.productComponentsArray
   });
 
   productTypeEnum = ProductTypeEnum;
@@ -54,11 +58,15 @@ export class FormComponent implements OnInit, OnDestroy {
     return this._isHandset;
   }
 
+  isComposite$: Observable<boolean>;
   idParam$: Observable<string | null>;
   idParam: string | null;
   isLoading = false;
   productCategories$: Observable<ProductCategoryInterface[]>;
-  separatorKeysCodes: number[] = [ENTER, COMMA];
+  simpleProducts$: Observable<ProductInterface[]>;
+  selectedProductCategory$: BehaviorSubject<ProductCategoryInterface | undefined> = new BehaviorSubject<
+    ProductCategoryInterface | undefined
+  >(undefined);
 
   constructor(
     private taxService: TaxService,
@@ -69,7 +77,47 @@ export class FormComponent implements OnInit, OnDestroy {
     private productCategoryService: ProductCategoryService,
     private productService: ProductService
   ) {
-    this.productCategories$ = this.productCategoryService.getProductCategories();
+    this.simpleProducts$ = this.productService
+      .getProducts()
+      .pipe(map(products => products.filter(p => p.productType === ProductTypeEnum.simple)));
+
+    this.isComposite$ = this.productTypeControl.valueChanges.pipe(
+      untilDestroyed(this),
+      map(value => value === ProductTypeEnum.composite),
+      distinctUntilChanged(),
+      tap(isComposite => {
+        if (isComposite) {
+          this.productComponentsArray.setValidators([Validators.required]);
+        } else {
+          this.productComponentsArray.clearValidators();
+        }
+      })
+    );
+
+    this.productCategories$ = forkJoin([
+      this.productCategoryService.getProductCategories(),
+      this.taxService.getTaxes()
+    ]).pipe(
+      map(([productCategories, taxCategories]) =>
+        productCategories.map(category => ({
+          ...category,
+          tax: taxCategories.find(t => t.id === category.taxCategoryId)
+        }))
+      ),
+      // a következő blokk miatt ráhívna újra
+      shareReplay(1),
+      untilDestroyed(this)
+    );
+
+    combineLatest([this.productCategoryIdControl.valueChanges, this.productCategories$])
+      .pipe(untilDestroyed(this))
+      .subscribe(([newValue, productCategories]) => {
+        if (isPresent(newValue) && isNumeric(+newValue)) {
+          this.selectedProductCategory$.next(productCategories.find(pc => pc.id === +newValue));
+        } else {
+          this.selectedProductCategory$.next(undefined);
+        }
+      });
 
     this.breakpointObserver
       .observe(Breakpoints.Handset)
@@ -84,49 +132,98 @@ export class FormComponent implements OnInit, OnDestroy {
       map(x => x.get('id'))
     );
 
-    this.idParam$.pipe(untilDestroyed(this)).subscribe(idParam => {
-      this.productForm.reset();
-      this.idParam = idParam;
-      if (isPresent(idParam) && isNumeric(+idParam)) {
-        this.isLoading = true;
-        this.taxService.getTaxById(+idParam).subscribe(
-          taxData => {
-            this.productForm.patchValue(taxData);
-            this.isLoading = false;
-          },
-          () => {
-            this.isLoading = false;
-            this.router.navigate(['tax']);
-          }
-        );
-      }
-    });
+    this.idParam$
+      .pipe(
+        untilDestroyed(this),
+        distinctUntilChanged()
+      )
+      .subscribe(idParam => {
+        this.productForm.reset();
+        this.idParam = idParam;
+        if (isPresent(idParam) && isNumeric(+idParam)) {
+          this.isLoading = true;
+          this.productService.getProductById(+idParam).subscribe(
+            productData => {
+              this.productForm.patchValue(productData);
+              if (Array.isArray(productData.components)) {
+                productData.components.forEach((component: ProductComponentInterface) =>
+                  this.productComponentsArray.push(this.createComponentForm(component))
+                );
+              }
+              this.isLoading = false;
+            },
+            () => {
+              this.isLoading = false;
+              this.router.navigate(['product']);
+            }
+          );
+        }
+      });
   }
 
   ngOnDestroy() {}
 
   ngOnInit(): void {}
 
-  submitForm(b: boolean) {
-    this.productForm.markAllAsTouched();
-  }
-
-  add($event: MatChipInputEvent) {
-    if ($event.value) {
-      const currentValue = this.labelsControl.value ? this.labelsControl.value : [];
-      this.labelsControl.setValue([...currentValue, $event.value]);
-      this.labelControl.reset();
+  private endpointCall(): Observable<ProductInterface> {
+    if (isPresent(this.idParam) && isNumeric(+this.idParam)) {
+      return this.productService.putProduct(this.productForm.value, +this.idParam);
     }
+    return this.productService.postProduct(this.productForm.value);
   }
 
-  remove(labelIndex: number) {
-    (this.labelsControl.value as Array<string>).splice(labelIndex, 1);
+  private _submit(): Observable<ProductInterface | undefined> {
+    this.productForm.submitted = true;
+    this.productForm.markAllAsTouched();
+    this.productComponentsArray.controls.forEach((c: FormGroup) => c.markAllAsTouched());
+    if (this.productForm.valid) {
+      this.isLoading = true;
+      this.productForm.startSubmit();
+      return this.endpointCall();
+    }
+    return throwError({});
   }
 
-  removeLoadedImage(event: MouseEvent) {
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-    event.preventDefault();
-    this.imageControl.setValue(undefined);
+  submitForm(createNew: boolean) {
+    this._submit().subscribe(
+      (product: ProductInterface) => {
+        this.isLoading = false;
+        this.productForm.endSubmit();
+        this.matSnackBar.open(
+          this.idParam === 'new' ? 'Új termék felvétele sikeres!' : 'Termék módosítása sikeres!',
+          'Bezárás',
+          { duration: 5000 }
+        );
+        if (createNew) {
+          this.router.navigate(['product', 'new']);
+          this.productForm.reset();
+        } else {
+          this.router.navigate(['product', product.id]);
+        }
+      },
+      () => {
+        this.isLoading = false;
+        this.productForm.endSubmit();
+      }
+    );
+  }
+
+  createComponentForm({ productId, quantity }): FormGroup {
+    const productIdControl = new FormControl(productId, Validators.required);
+    const quantityControl = new FormControl(quantity, [Validators.required, isIntegerValidator]);
+    return new FormGroup({ productId: productIdControl, quantity: quantityControl });
+  }
+
+  // form array
+  onAddNewComponent() {
+    const componentGroup = this.createComponentForm({ productId: undefined, quantity: undefined });
+    if (this.productForm.submitted) {
+      componentGroup.markAllAsTouched();
+    }
+    this.productComponentsArray.push(componentGroup);
+  }
+
+  onRemoveComponent(i: number) {
+    this.productComponentsArray.removeAt(i);
   }
 }

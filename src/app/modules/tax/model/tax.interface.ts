@@ -1,4 +1,4 @@
-export class TaxInterface {
+export interface TaxInterface {
   id?: number;
   name: string;
   percent: number;

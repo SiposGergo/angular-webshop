@@ -2,12 +2,54 @@
   <mat-card *ngIf="idParam$ | async as idParam">
     <mat-card-title>{{ idParam === 'new' ? 'Új termék' : 'Termék szerkesztése' }}</mat-card-title>
     <mat-card-content class="d-flex flex-column">
-      <div class="d-flex">
-        <div class="d-flex flex-column w-33">
+      <div class="d-flex" [ngClass]="{ 'flex-column': isHandset }">
+        <div class="d-flex flex-column" [ngClass]="{ 'w-33': !isHandset, 'w-100': isHandset }">
           <mat-form-field class="w-100">
             <input matInput type="text" placeholder="Név" required [formControl]="nameControl" />
             <mat-error>
               <app-validation [control]="nameControl"></app-validation>
+            </mat-error>
+          </mat-form-field>
+
+          <div class="w-100 d-flex">
+            <mat-form-field class="w-50 mr-2">
+              <input
+                matInput
+                type="number"
+                max="9999999"
+                placeholder="Nettó ár"
+                required
+                [formControl]="netPriceControl"
+              />
+              <mat-error>
+                <app-validation [control]="descriptionControl"></app-validation>
+              </mat-error>
+            </mat-form-field>
+
+            <div class="w-50 d-flex align-items-center">
+              <span class="mr-1">Bruttó: </span>
+              <span
+                class="gross"
+                *ngIf="this.selectedProductCategory$ | async as selectedProductCategory; else noGross"
+              >
+                {{ this.netPriceControl.value | gross: selectedProductCategory | number: '1.2' }}
+              </span>
+              <ng-template #noGross>
+                —
+              </ng-template>
+            </div>
+          </div>
+
+          <mat-form-field class="w-100">
+            <mat-select placeholder="Termékkategória" required [formControl]="productCategoryIdControl">
+              <ng-container *ngIf="productCategories$ | async as productCategories"
+                ><mat-option *ngFor="let productCategory of productCategories" [value]="productCategory.id">
+                  {{ productCategory.name }}
+                </mat-option></ng-container
+              >
+            </mat-select>
+            <mat-error>
+              <app-validation [control]="productTypeControl"></app-validation>
             </mat-error>
           </mat-form-field>
 
@@ -24,31 +66,22 @@
               <app-validation [control]="productTypeControl"></app-validation>
             </mat-error>
           </mat-form-field>
-
-          <mat-form-field class="w-100">
-            <mat-select placeholder="Termékkategória" required [formControl]="productTypeControl">
-              <ng-container *ngIf="productCategories$ | async as productCategories"
-                ><mat-option *ngFor="let productCategory of productCategories" [value]="productCategory.id">
-                  {{ productCategory.name }}
-                </mat-option></ng-container
-              >
-            </mat-select>
-            <mat-error>
-              <app-validation [control]="productTypeControl"></app-validation>
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field class="w-100">
-            <input matInput type="number" placeholder="Nettó ár" required [formControl]="netPriceControl" />
-            <mat-error>
-              <app-validation [control]="descriptionControl"></app-validation>
-            </mat-error>
-          </mat-form-field>
         </div>
-        <div class="image-div">
+        <div class="image-div" [ngClass]="{ 'image-div': !isHandset, 'image-div-handset': isHandset }">
           <app-image-uploader [imageControl]="imageControl" [touched]="imageControl.touched"></app-image-uploader>
         </div>
       </div>
+
+      <ng-container *ngIf="(isComposite$ | async) && simpleProducts$ | async as simpleProducts">
+        <app-form-array
+          [isHandset]="isHandset"
+          [productForm]="productForm"
+          [simpleProducts]="simpleProducts"
+          [productComponentsArray]="productComponentsArray"
+          (removeComponent)="onRemoveComponent($event)"
+          (addNewComponent)="onAddNewComponent()"
+        ></app-form-array
+      ></ng-container>
 
       <mat-form-field>
         <textarea matInput placeholder="Leírás" required [formControl]="descriptionControl"></textarea>
@@ -57,22 +90,11 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field>
-        <mat-chip-list #chipList aria-label="Fruit selection">
-          <mat-chip *ngFor="let label of labelsControl.value; let i = index" (removed)="remove(i)" [selectable]="false">
-            {{ label }}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip>
-          <input
-            [placeholder]="this.labelsControl.value?.length > 0 ? 'Címkék' : 'Címke hozzáadása'"
-            [formControl]="labelControl"
-            [matChipInputFor]="chipList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-            [matChipInputAddOnBlur]="true"
-            (matChipInputTokenEnd)="add($event)"
-          />
-        </mat-chip-list>
-      </mat-form-field>
+      <app-mat-chips-input
+        class="w-100"
+        [chipsControl]="labelsControl"
+        [textInputControl]="labelControl"
+      ></app-mat-chips-input>
     </mat-card-content>
     <mat-card-actions class="d-flex justify-content-end">
       <button

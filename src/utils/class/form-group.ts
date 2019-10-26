@@ -34,7 +34,7 @@ export class FormGroup extends AngularFormGroup {
     Object.keys(this.controls).forEach(field => {
       const control = this.get(field);
       if (isPresent(control)) {
-        control.markAsTouched({ onlySelf: true });
+        control.markAsTouched();
       }
     });
   }

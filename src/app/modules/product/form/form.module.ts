@@ -13,9 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { ImageUploaderModule } from '../../image-uploader/image-uploader.module';
+import { PipeModule } from '../pipe/pipe.module';
+import { MatChipsInputModule } from '../../mat-chips-input/mat-chips-input.module';
+import { FormArrayComponent } from './form-array/form-array.component';
 
 @NgModule({
-  declarations: [FormComponent],
+  declarations: [FormComponent, FormArrayComponent],
   imports: [
     CommonModule,
     FormRoutingModule,
@@ -28,7 +31,9 @@ import { ImageUploaderModule } from '../../image-uploader/image-uploader.module'
     MatButtonModule,
     MatChipsModule,
     MatIconModule,
-    ImageUploaderModule
+    ImageUploaderModule,
+    PipeModule,
+    MatChipsInputModule
   ]
 })
 export class FormModule {}
